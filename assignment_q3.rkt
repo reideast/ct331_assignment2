@@ -35,7 +35,7 @@
     [(equal? key (cadr tree)) #t]
     [(< key (cadr tree)) (binary_search (car tree) key)]
     [(> key (cadr tree)) (binary_search (caddr tree) key)]))
-(display "\nSearch single item tree for value that exists (should be #t): ")
+(display "\n\nSearch single item tree for value that exists (should be #t): ")
 (binary_search i_am_root 3)
 (display "Search single item tree for value that does not exists (should be #f): ")
 (binary_search i_am_root 4)
@@ -54,7 +54,7 @@
     [(equal? item (cadr tree)) tree]
     [(< item (cadr tree)) (list (insert_item (car tree) item) (cadr tree) (caddr tree))]
     [(> item (cadr tree)) (list (car tree) (cadr tree) (insert_item (caddr tree) item))]))
-(display "Insert 4 into an empty/null tree. Should be (() 4 ()): ")
+(display "\nInsert 4 into an empty/null tree. Should be (() 4 ()): ")
 (insert_item '() 4)
 (display "Insert 3 into a small tree where it already exists, should be (() 3 ()): ")
 (insert_item i_am_root 3)
@@ -69,3 +69,13 @@ updated_tree ;then, display the results
 (insert_item (insert_item (insert_item '() 2) 1) 3)
 
 ; Part D: Insert a list into a BST
+(define (insert_list tree lst)
+  (if (empty? lst)
+     tree
+     (insert_list
+       (insert_item tree (car lst))
+       (cdr lst))))
+; TODO make it tail recursive
+(display "\nInsert list into empty tree: '(2 1 3). Should be ((() 1 ()) 2 (() 3 ())): ");
+(insert_list '() '(2 1 3))
+(equal? two_tree (insert_list '() '(2 1 3)))
