@@ -2,8 +2,8 @@
 (provide traverse)
 (provide binary_search)
 (provide insert_item)
-;(provide insert_list)
-;(provide treesort)
+(provide insert_list)
+(provide treesort)
 ;(provide treesort_compare)
 
 ; Define some binary search trees
@@ -49,7 +49,6 @@
 
 ; Part C: Insert a value into a BST
 (define (insert_item tree item)
-;  (begin (printf "Inserting into tree=~a key=~a~n" tree item)
   (cond
     [(null? tree) (list '() item '())]
     [(equal? item (cadr tree)) tree]
@@ -84,6 +83,30 @@ updated_tree ;then, display the results
 (display "Recreate example tree from a list. Should output #true: ")
 (equal? example_tree (insert_list '() example_list_to_insert))
 
-; Part E: Tree sort
+; Part E: Treesort
+;Treesort to cout
+(define (treesort_display lst)
+  (traverse_print (insert_list '() lst)))
+(display "\nTreesort on the example list (print). Should be 1,3,4,6,7,8,10,13,14,: ")
+(treesort_display example_list_to_insert)
+
+;Treesort to a new, ordered list
+(define (treesort lst)
+  (inorder_to_list (insert_list '() lst))) ;first build a tree, then use it to build a list (by visiting all nodes in order)
+(define (inorder_to_list tree)
+  (if (null? tree)
+    '()
+    (append ;Acts as a psuedo (begin)
+      (inorder_to_list (car tree))
+      (list (cadr tree))
+      (inorder_to_list (caddr tree)))))
+(display "\nTreesort on the example list (list-ify). Should be '(1 3 4 6 7 8 10 13 14): ")
+(treesort example_list_to_insert)
+(display "Treesort of same data should be the same, even if inserted in different order: ")
+(equal? (treesort '(1 2 3)) (treesort '(2 1 3)))
+(display "Treesort of same num items but different data should be, of course, false: ")
+(equal? (treesort '(2 3 1 4)) (treesort '(20 30 10 40)))
+(display "Treesort 'make my CPU hurt': ")
+(treesort '(60 12 435 6 21 42 677 43 65 90 76 9 34 678 4 22 4 67 97 21 46 2 6 8 90 345 27 2111 64 60 0 11 -2 244 5 77 33 5 4444 60303))
 
 ; Part F: Tree sort with sorting function
