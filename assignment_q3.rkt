@@ -21,13 +21,12 @@
 
 ; Part B: Search the tree for a value
 (define (binary_search tree key)
+;  (begin (printf "Searching tree=~a key=~a~n" tree key)
   (cond
     [(null? tree) #f]
-    [else (or
-        (equal? key (cadr tree))
-        (binary_search (car tree) key)
-        (binary_search (caddr tree) key))]))
-
+    [(equal? key (cadr tree)) #t]
+    [(< key (cadr tree)) (binary_search (car tree) key)]
+    [(> key (cadr tree)) (binary_search (caddr tree) key)]))
 (display "Search single item tree for value that exists (should be #t): ")
 (binary_search i_am_root 3)
 (display "Search single item tree for value that does not exists (should be #f): ")
