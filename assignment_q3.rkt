@@ -12,6 +12,7 @@
 (define bigger_tree '(((() 3 ()) 5 (() 7 ())) 10 (() 15 ())))
 (define complete_tree '(((() 3 ()) 5 (() 7 ())) 10 ((() 13 ()) 15 (() 17 ()))))
 (define example_tree '(((() 1 ()) 3 ((() 4 ()) 6 (() 7 ()))) 8 (() 10 ((() 13 ()) 14 ()))))
+(define example_list_to_insert '(8 3 1 6 4 7 10 14 13))
 
 ; Part A: Display the contents of a binary search tree (in sorted order)
 (define (traverse tree callback)
@@ -65,17 +66,24 @@
 updated_tree ;then, display the results
 (display "Insert 9 into the result of the previous, should be '(((() 1 ()) 3 ((() 4 (() 5 ())) 6 (() 7 ()))) 8 ((() 9 ()) 10 ((() 13 ()) 14 ()))): ")
 (insert_item updated_tree 9)
-(display "Insert first 2, then 1, then 3 into a null tree. Should be ((() 1 ()) 2 (() 3 ())): ");
+(display "Insert first 2, then 1, then 3 into a null tree. Should be ((() 1 ()) 2 (() 3 ())): ")
 (insert_item (insert_item (insert_item '() 2) 1) 3)
 
 ; Part D: Insert a list into a BST
 (define (insert_list tree lst)
   (if (empty? lst)
      tree
-     (insert_list
-       (insert_item tree (car lst))
-       (cdr lst))))
-; TODO make it tail recursive
-(display "\nInsert list into empty tree: '(2 1 3). Should be ((() 1 ()) 2 (() 3 ())): ");
+     (insert_list (insert_item tree (car lst)) (cdr lst))))
+; TODO make it tail recursive...WAIT it already is! cool.
+(display "\nInsert list into empty tree: '(2 1 3). Should be ((() 1 ()) 2 (() 3 ())): ")
 (insert_list '() '(2 1 3))
-(equal? two_tree (insert_list '() '(2 1 3)))
+(display "Insert '(0 4) into that list. Should be (((() 0 ()) 1 ()) 2 (() 3 (() 4 ()))): ")
+(insert_list two_tree '(0 4))
+(display "Insert list that makes an unbalanced tree: '(1 2 3). Should be (() 1 (() 2 (() 3 ()))): ")
+(insert_list '() '(1 2 3))
+(display "Recreate example tree from a list. Should output #true: ")
+(equal? example_tree (insert_list '() example_list_to_insert))
+
+; Part E: Tree sort
+
+; Part F: Tree sort with sorting function
