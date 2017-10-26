@@ -1,12 +1,12 @@
 #lang racket
 (provide traverse)
-(provide binary_search)
+(provide binary_search?)
 (provide insert_item)
 (provide insert_list)
 (provide treesort)
 (provide treesort_compare)
 
-; Define some binary search trees
+; Define some binary search trees to work with
 (define i_am_root '(() 3 ()))
 (define two_tree '((() 1 ()) 2 (() 3 ())))
 (define bigger_tree '(((() 3 ()) 5 (() 7 ())) 10 (() 15 ())))
@@ -15,37 +15,38 @@
 (define example_list_to_insert '(8 3 1 6 4 7 10 14 13))
 
 ; Part A: Display the contents of a binary search tree (in sorted order)
-(define (traverse tree callback)
+(define (traverse tree callback) ;Callback should be a function with a single atom as an argument and does something with it
   (cond
-    [(not (null? tree)) (begin
-       (traverse (car tree) callback)
-       (callback (cadr tree))
-       (traverse (caddr tree) callback))]))
+    [(not (null? tree))
+      (begin
+        (traverse (car tree) callback)
+        (callback (cadr tree))
+        (traverse (caddr tree) callback))]))
 (display "Traverse & Print a tree with only root: ")
-(traverse i_am_root write)
+(traverse i_am_root write) ;using write as the callback
 (display "\nTraverse & Print a complete tree with height two: ")
-(traverse two_tree (curry printf "~a,"))
+(traverse two_tree (curry printf "~a,")) ;using a curried version of printf as the callback, which now only takes one argument
 (display "\nTraverse & Print the example tree: ")
 (define traverse_print (curryr traverse (curry printf "~a,"))) ;curryr is like curry, but does arguments right-to-left
 (traverse_print example_tree)
 
 ; Part B: Search the tree for a value
-(define (binary_search tree key)
+(define (binary_search? tree key)
   (cond
     [(null? tree) #f]
     [(equal? key (cadr tree)) #t]
-    [(< key (cadr tree)) (binary_search (car tree) key)]
-    [(> key (cadr tree)) (binary_search (caddr tree) key)]))
+    [(< key (cadr tree)) (binary_search? (car tree) key)]
+    [(> key (cadr tree)) (binary_search? (caddr tree) key)]))
 (display "\n\nSearch single item tree for value that exists (should be #t): ")
-(binary_search i_am_root 3)
+(binary_search? i_am_root 3)
 (display "Search single item tree for value that does not exists (should be #f): ")
-(binary_search i_am_root 4)
-(display "Search large tree for value that exists (should be #t): ")
-(binary_search complete_tree 5)
-(display "Search large tree for value that exists (should be #t): ")
-(binary_search complete_tree 17)
+(binary_search? i_am_root 4)
+(display "Search large tree for value that exists on left (should be #t): ")
+(binary_search? complete_tree 5)
+(display "Search large tree for value that exists on right (should be #t): ")
+(binary_search? complete_tree 17)
 (display "Search large tree for value that does not exists (should be #f): ")
-(binary_search complete_tree 256)
+(binary_search? complete_tree 256)
 
 ; Part C: Insert a value into a BST
 (define (insert_item tree item)
@@ -53,7 +54,7 @@
     [(null? tree) (list '() item '())]
     [(equal? item (cadr tree)) tree]
     [(< item (cadr tree)) (list (insert_item (car tree) item) (cadr tree) (caddr tree))]
-    [(> item (cadr tree)) (list (car tree) (cadr tree) (insert_item (caddr tree) item))]))
+    [else (list (car tree) (cadr tree) (insert_item (caddr tree) item))]))
 (display "\nInsert 4 into an empty/null tree. Should be (() 4 ()): ")
 (insert_item '() 4)
 (display "Insert 3 into a small tree where it already exists, should be (() 3 ()): ")
@@ -85,12 +86,13 @@ updated_tree ;then, display the results
 
 ; Part E: Treesort
 ;Treesort to cout
+;I only left this one in here because I like how it's so svelte. The next block has my actual function.
 (define (treesort_display lst)
   (traverse_print (insert_list '() lst)))
 (display "\nTreesort on the example list (print). Should be 1,3,4,6,7,8,10,13,14,: ")
 (treesort_display example_list_to_insert)
 
-;Treesort to a new, ordered list
+;Treesort a list to a new, ordered list
 (define (treesort lst)
   (inorder_to_list (insert_list '() lst))) ;first build a tree, then use it to build a list (by visiting all nodes in order)
 (define (inorder_to_list tree)
