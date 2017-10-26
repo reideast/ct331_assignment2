@@ -4,7 +4,7 @@
 (provide insert_item)
 (provide insert_list)
 (provide treesort)
-;(provide treesort_compare)
+(provide treesort_compare)
 
 ; Define some binary search trees
 (define i_am_root '(() 3 ()))
@@ -110,3 +110,23 @@ updated_tree ;then, display the results
 (treesort '(60 12 435 6 21 42 677 43 65 90 76 9 34 678 4 22 4 67 97 21 46 2 6 8 90 345 27 2111 64 60 0 11 -2 244 5 77 33 5 4444 60303))
 
 ; Part F: Tree sort with sorting function
+(define (treesort_compare lst comparator)
+  (inorder_to_list (insert_list_compare '() lst comparator)))
+(define (insert_list_compare tree lst comparator)
+  (if (empty? lst)
+     tree
+     (insert_list_compare (insert_item_compare tree (car lst) comparator) (cdr lst) comparator)))
+(define (insert_item_compare tree item comparator)
+  (cond
+    [(null? tree) (list '() item '())]
+    [(equal? item (cadr tree)) tree]
+    [(comparator item (cadr tree)) (list (insert_item_compare (car tree) item comparator) (cadr tree) (caddr tree))]
+    [else (list (car tree) (cadr tree) (insert_item_compare (caddr tree) item comparator))]))
+(display "\nTreesort on the example list: <. Should be '(1 3 4 6 7 8 10 13 14): ")
+(treesort_compare example_list_to_insert <)
+(display "Treesort on the example list: >. Should be '(14 13 10 8 7 6 4 3 1): ")
+(treesort_compare example_list_to_insert >)
+(display "Treesort on a list of strings with (string<?): . Should be '(Apple Banana Cumquat Duran Elderberry): ")
+(treesort_compare '("Elderberry" "Cumquat" "Apple" "Duran" "Banana") string<?)
+(display "Reversed (string>?): . Should be '(Apple Banana Cumquat Duran Elderberry): ")
+(treesort_compare '("Elderberry" "Cumquat" "Apple" "Duran" "Banana") string>?)
